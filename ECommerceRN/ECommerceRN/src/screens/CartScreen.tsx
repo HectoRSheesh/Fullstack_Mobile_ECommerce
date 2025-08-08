@@ -9,14 +9,18 @@ import {
   Alert,
   RefreshControl,
   Image,
+  ScrollView,
+  SafeAreaView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useFocusEffect } from '@react-navigation/native';
 import { cartService, orderService } from '../services/api';
 import { storage } from '../utils/storage';
 import { CartItem, CartSummary } from '../types';
+import { useTheme } from '../contexts/ThemeContext';
 
 const CartScreen: React.FC = () => {
+  const { colors } = useTheme();
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [cartSummary, setCartSummary] = useState<CartSummary | null>(null);
   const [loading, setLoading] = useState(true);
@@ -169,7 +173,7 @@ const CartScreen: React.FC = () => {
   };
 
   const renderCartItem = ({ item }: { item: CartItem }) => (
-    <View style={styles.cartItem}>
+    <View style={[styles.cartItem, { backgroundColor: colors.card, borderColor: colors.border }]}>
       <Image
         source={{ uri: item.productImageUrl || 'https://via.placeholder.com/80' }}
         style={styles.productImage}
@@ -177,29 +181,29 @@ const CartScreen: React.FC = () => {
       />
       
       <View style={styles.productInfo}>
-        <Text style={styles.productName} numberOfLines={2}>
+        <Text style={[styles.productName, { color: colors.text }]} numberOfLines={2}>
           {item.productName || 'Ürün'}
         </Text>
-        <Text style={styles.productPrice}>₺{item.productPrice.toFixed(2)}</Text>
+        <Text style={[styles.productPrice, { color: colors.primary }]}>₺{item.productPrice.toFixed(2)}</Text>
       </View>
 
       <View style={styles.quantityContainer}>
         <TouchableOpacity
-          style={[styles.quantityButton, updating === item.id && styles.quantityButtonDisabled]}
+          style={[styles.quantityButton, updating === item.id && styles.quantityButtonDisabled, { borderColor: colors.border }]}
           onPress={() => updateQuantity(item.id, item.quantity - 1)}
           disabled={updating === item.id}
         >
-          <Icon name="remove" size={16} color={updating === item.id ? "#ccc" : "#333"} />
+          <Icon name="remove" size={16} color={updating === item.id ? colors.border : colors.text} />
         </TouchableOpacity>
         
-        <Text style={styles.quantityText}>{item.quantity}</Text>
+        <Text style={[styles.quantityText, { color: colors.text }]}>{item.quantity}</Text>
         
         <TouchableOpacity
-          style={[styles.quantityButton, updating === item.id && styles.quantityButtonDisabled]}
+          style={[styles.quantityButton, updating === item.id && styles.quantityButtonDisabled, { borderColor: colors.border }]}
           onPress={() => updateQuantity(item.id, item.quantity + 1)}
           disabled={updating === item.id}
         >
-          <Icon name="add" size={16} color={updating === item.id ? "#ccc" : "#333"} />
+          <Icon name="add" size={16} color={updating === item.id ? colors.border : colors.text} />
         </TouchableOpacity>
       </View>
 
@@ -214,30 +218,34 @@ const CartScreen: React.FC = () => {
 
   if (loading) {
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#007AFF" />
-        <Text style={styles.loadingText}>Sepet yükleniyor...</Text>
-      </View>
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={colors.primary} />
+          <Text style={[styles.loadingText, { color: colors.text }]}>Sepet yükleniyor...</Text>
+        </View>
+      </SafeAreaView>
     );
   }
 
   if (cartItems.length === 0) {
     return (
-      <View style={styles.emptyContainer}>
-        <Icon name="bag-outline" size={80} color="#ccc" />
-        <Text style={styles.emptyText}>Sepetiniz boş</Text>
-        <Text style={styles.emptySubText}>Ürün eklemek için alışverişe başlayın</Text>
-      </View>
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+        <View style={styles.emptyContainer}>
+          <Icon name="bag-outline" size={80} color={colors.border} />
+          <Text style={[styles.emptyText, { color: colors.text }]}>Sepetiniz boş</Text>
+          <Text style={[styles.emptySubText, { color: colors.text }]}>Ürün eklemek için alışverişe başlayın</Text>
+        </View>
+      </SafeAreaView>
     );
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Sepetim ({cartItems.length} ürün)</Text>
+      <View style={[styles.header, { backgroundColor: colors.card, borderBottomColor: colors.border }]}>
+        <Text style={[styles.headerTitle, { color: colors.text }]}>Sepetim ({cartItems.length} ürün)</Text>
         <TouchableOpacity onPress={clearCart}>
-          <Text style={styles.clearText}>Temizle</Text>
+          <Text style={[styles.clearText, { color: colors.primary }]}>Temizle</Text>
         </TouchableOpacity>
       </View>
 
@@ -253,34 +261,34 @@ const CartScreen: React.FC = () => {
       />
 
       {/* Footer */}
-      <View style={styles.footer}>
+      <View style={[styles.footer, { backgroundColor: colors.card, borderTopColor: colors.border }]}>
         {cartSummary && (
           <View style={styles.summaryContainer}>
             <View style={styles.summaryRow}>
-              <Text style={styles.summaryLabel}>Ara Toplam:</Text>
-              <Text style={styles.summaryValue}>₺{cartSummary.totalAmount.toFixed(2)}</Text>
+              <Text style={[styles.summaryLabel, { color: colors.text }]}>Ara Toplam:</Text>
+              <Text style={[styles.summaryValue, { color: colors.text }]}>₺{cartSummary.totalAmount.toFixed(2)}</Text>
             </View>
             {cartSummary.shippingCost > 0 && (
               <View style={styles.summaryRow}>
-                <Text style={styles.summaryLabel}>Kargo:</Text>
-                <Text style={styles.summaryValue}>₺{cartSummary.shippingCost.toFixed(2)}</Text>
+                <Text style={[styles.summaryLabel, { color: colors.text }]}>Kargo:</Text>
+                <Text style={[styles.summaryValue, { color: colors.text }]}>₺{cartSummary.shippingCost.toFixed(2)}</Text>
               </View>
             )}
             {cartSummary.taxAmount > 0 && (
               <View style={styles.summaryRow}>
-                <Text style={styles.summaryLabel}>KDV:</Text>
-                <Text style={styles.summaryValue}>₺{cartSummary.taxAmount.toFixed(2)}</Text>
+                <Text style={[styles.summaryLabel, { color: colors.text }]}>KDV:</Text>
+                <Text style={[styles.summaryValue, { color: colors.text }]}>₺{cartSummary.taxAmount.toFixed(2)}</Text>
               </View>
             )}
             <View style={[styles.summaryRow, styles.totalRow]}>
-              <Text style={styles.totalLabel}>Toplam:</Text>
-              <Text style={styles.totalPrice}>₺{cartSummary.grandTotal.toFixed(2)}</Text>
+              <Text style={[styles.totalLabel, { color: colors.text }]}>Toplam:</Text>
+              <Text style={[styles.totalPrice, { color: colors.primary }]}>₺{cartSummary.grandTotal.toFixed(2)}</Text>
             </View>
           </View>
         )}
         
         <TouchableOpacity
-          style={[styles.orderButton, ordering && styles.orderButtonDisabled]}
+          style={[styles.orderButton, { backgroundColor: colors.primary }, ordering && styles.orderButtonDisabled]}
           onPress={createOrder}
           disabled={ordering}
         >
@@ -294,14 +302,13 @@ const CartScreen: React.FC = () => {
           )}
         </TouchableOpacity>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
   },
   loadingContainer: {
     flex: 1,

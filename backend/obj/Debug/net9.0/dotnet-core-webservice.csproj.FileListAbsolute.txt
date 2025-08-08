@@ -782,3 +782,4 @@ C:\Users\Lenovo\Desktop\front\backend\obj\Debug\net9.0\refint\dotnet-core-webser
 C:\Users\Lenovo\Desktop\front\backend\obj\Debug\net9.0\dotnet-core-webservice.pdb
 C:\Users\Lenovo\Desktop\front\backend\obj\Debug\net9.0\dotnet-core-webservice.genruntimeconfig.cache
 C:\Users\Lenovo\Desktop\front\backend\obj\Debug\net9.0\ref\dotnet-core-webservice.dll
+C:\Users\Lenovo\Desktop\front\backend\obj\Debug\net9.0\dotnet-core-webservice.sourcelink.json

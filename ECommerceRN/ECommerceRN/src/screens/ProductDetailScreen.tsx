@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { RouteProp } from '@react-navigation/native';
+import { RouteProp, CommonActions } from '@react-navigation/native';
 import { productService, cartService } from '../services/api';
 import { storage } from '../utils/storage';
 import { Product } from '../types';
@@ -73,10 +73,25 @@ const ProductDetailScreen: React.FC<Props> = ({ navigation, route }) => {
           { 
             text: 'Sepete Git', 
             onPress: () => {
-              // MainTabs'a dön ve Cart tab'ını aç
-              navigation.navigate('MainTabs');
-              // Tab navigator için global state yöneticisi kullanmak gerekebilir
-              // Şimdilik sadece ana sayfaya dönelim
+              // MainTabs navigator'a git ve Cart screen'i aç
+              navigation.reset({
+                index: 0,
+                routes: [
+                  {
+                    name: 'MainTabs',
+                    state: {
+                      routes: [
+                        { name: 'Home' },
+                        { name: 'Products' },
+                        { name: 'Cart' },
+                        { name: 'Orders' },
+                        { name: 'Profile' }
+                      ],
+                      index: 2, // Cart tab index
+                    },
+                  },
+                ],
+              });
             },
             style: 'default'
           }

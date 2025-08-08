@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   Alert,
   RefreshControl,
+  SafeAreaView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
@@ -16,10 +17,12 @@ import { orderService } from '../services/api';
 import { storage } from '../utils/storage';
 import { Order } from '../types';
 import { MainStackParamList } from '../navigation/AppNavigator';
+import { useTheme } from '../contexts/ThemeContext';
 
 type OrdersScreenNavigationProp = StackNavigationProp<MainStackParamList>;
 
 const OrdersScreen: React.FC = () => {
+  const { colors } = useTheme();
   const navigation = useNavigation<OrdersScreenNavigationProp>();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
@@ -113,7 +116,7 @@ const OrdersScreen: React.FC = () => {
 
   const renderOrder = ({ item }: { item: Order }) => (
     <TouchableOpacity
-      style={styles.orderCard}
+      style={[styles.orderCard, { backgroundColor: colors.card, borderColor: colors.border }]}
       onPress={() => {
         // Order detail sayfasına yönlendir
         console.log('Order pressed:', item.id);
@@ -121,8 +124,8 @@ const OrdersScreen: React.FC = () => {
     >
       <View style={styles.orderHeader}>
         <View>
-          <Text style={styles.orderNumber}>#{item.orderNumber}</Text>
-          <Text style={styles.orderDate}>
+          <Text style={[styles.orderNumber, { color: colors.text }]}>#{item.orderNumber}</Text>
+          <Text style={[styles.orderDate, { color: colors.text, opacity: 0.7 }]}>
             {new Date(item.orderDate).toLocaleDateString('tr-TR')}
           </Text>
         </View>
@@ -132,43 +135,47 @@ const OrdersScreen: React.FC = () => {
       </View>
       
       <View style={styles.orderInfo}>
-        <Text style={styles.itemCount}>{item.totalItems} ürün</Text>
-        <Text style={styles.orderTotal}>₺{item.totalAmount.toFixed(2)}</Text>
+        <Text style={[styles.itemCount, { color: colors.text, opacity: 0.8 }]}>{item.totalItems} ürün</Text>
+        <Text style={[styles.orderTotal, { color: colors.primary }]}>₺{item.totalAmount.toFixed(2)}</Text>
       </View>
       
       <View style={styles.orderFooter}>
-        <Text style={styles.shippingAddress} numberOfLines={1}>
+        <Text style={[styles.shippingAddress, { color: colors.text, opacity: 0.7 }]} numberOfLines={1}>
           {item.shippingAddress}, {item.shippingCity}
         </Text>
-        <Icon name="chevron-forward" size={16} color="#666" />
+        <Icon name="chevron-forward" size={16} color={colors.text} />
       </View>
     </TouchableOpacity>
   );
 
   if (loading) {
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#007AFF" />
-        <Text style={styles.loadingText}>Siparişler yükleniyor...</Text>
-      </View>
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={colors.primary} />
+          <Text style={[styles.loadingText, { color: colors.text }]}>Siparişler yükleniyor...</Text>
+        </View>
+      </SafeAreaView>
     );
   }
 
   if (orders.length === 0) {
     return (
-      <View style={styles.emptyContainer}>
-        <Icon name="receipt-outline" size={80} color="#ccc" />
-        <Text style={styles.emptyText}>Henüz siparişiniz yok</Text>
-        <Text style={styles.emptySubText}>İlk siparişinizi vermek için alışverişe başlayın</Text>
-      </View>
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+        <View style={styles.emptyContainer}>
+          <Icon name="receipt-outline" size={80} color={colors.border} />
+          <Text style={[styles.emptyText, { color: colors.text }]}>Henüz siparişiniz yok</Text>
+          <Text style={[styles.emptySubText, { color: colors.text, opacity: 0.7 }]}>İlk siparişinizi vermek için alışverişe başlayın</Text>
+        </View>
+      </SafeAreaView>
     );
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Siparişlerim</Text>
-        <Text style={styles.headerSubtitle}>{orders.length} sipariş</Text>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <View style={[styles.header, { backgroundColor: colors.card, borderBottomColor: colors.border }]}>
+        <Text style={[styles.headerTitle, { color: colors.text }]}>Siparişlerim</Text>
+        <Text style={[styles.headerSubtitle, { color: colors.text, opacity: 0.7 }]}>{orders.length} sipariş</Text>
       </View>
       
       <FlatList
@@ -177,17 +184,16 @@ const OrdersScreen: React.FC = () => {
         keyExtractor={(item) => item.id.toString()}
         contentContainerStyle={styles.ordersList}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />
         }
       />
-    </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
   },
   loadingContainer: {
     flex: 1,
@@ -197,7 +203,6 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: 10,
     fontSize: 16,
-    color: '#666',
   },
   emptyContainer: {
     flex: 1,
@@ -208,47 +213,41 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 20,
     fontWeight: '600',
-    color: '#666',
     marginTop: 20,
   },
   emptySubText: {
     fontSize: 16,
-    color: '#999',
     textAlign: 'center',
     marginTop: 8,
   },
   header: {
-    backgroundColor: 'white',
     padding: 20,
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
   },
   headerTitle: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#333',
   },
   headerSubtitle: {
     fontSize: 16,
-    color: '#666',
     marginTop: 4,
   },
   ordersList: {
     padding: 15,
   },
   orderCard: {
-    backgroundColor: 'white',
     borderRadius: 12,
     padding: 15,
     marginBottom: 15,
+    borderWidth: 1,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 2,
     },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   orderHeader: {
     flexDirection: 'row',
@@ -259,11 +258,9 @@ const styles = StyleSheet.create({
   orderNumber: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
   },
   orderDate: {
     fontSize: 14,
-    color: '#666',
     marginTop: 2,
   },
   statusBadge: {
@@ -284,12 +281,10 @@ const styles = StyleSheet.create({
   },
   itemCount: {
     fontSize: 16,
-    color: '#666',
   },
   orderTotal: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#007AFF',
   },
   orderFooter: {
     flexDirection: 'row',
@@ -301,7 +296,6 @@ const styles = StyleSheet.create({
   },
   shippingAddress: {
     fontSize: 14,
-    color: '#666',
     flex: 1,
     marginRight: 10,
   },

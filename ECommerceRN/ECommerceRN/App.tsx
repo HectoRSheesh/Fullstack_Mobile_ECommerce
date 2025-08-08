@@ -4,6 +4,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import AppNavigator from './src/navigation/AppNavigator';
 import { storage } from './src/utils/storage';
+import { ThemeProvider } from './src/contexts/ThemeContext';
 
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -87,15 +88,17 @@ export default function App() {
   console.log('🚀 App rendering, authenticated:', isAuthenticated);
 
   return (
-    <SafeAreaProvider>
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <StatusBar barStyle="dark-content" />
-        <AppNavigator 
-          isAuthenticated={isAuthenticated}
-          onLogin={handleLogin}
-          onLogout={handleLogout}
-        />
-      </GestureHandlerRootView>
-    </SafeAreaProvider>
+    <ThemeProvider>
+      <SafeAreaProvider>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <StatusBar barStyle="dark-content" />
+          <AppNavigator 
+            isAuthenticated={isAuthenticated}
+            onLogin={handleLogin}
+            onLogout={handleLogout}
+          />
+        </GestureHandlerRootView>
+      </SafeAreaProvider>
+    </ThemeProvider>
   );
 }
