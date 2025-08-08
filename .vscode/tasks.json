@@ -1,0 +1,40 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Run E-commerce API",
+			"type": "shell",
+			"command": "dotnet run --project backend/dotnet-core-webservice.csproj",
+			"group": "build",
+			"isBackground": true,
+			"options": {
+				"cwd": "${workspaceFolder}"
+			},
+			"problemMatcher": [
+				"$msCompile"
+			]
+		},
+		{
+			"label": "Start React Native Android (Fixed)",
+			"type": "shell",
+			"command": "npm",
+			"args": ["run", "android"],
+			"group": "build",
+			"isBackground": true,
+			"options": {
+				"cwd": "${workspaceFolder}/ECommerceRN/ECommerceRN"
+			}
+		},
+		{
+			"label": "Start React Native Metro",
+			"type": "shell",
+			"command": "npm",
+			"args": ["start"],
+			"group": "build",
+			"isBackground": true,
+			"options": {
+				"cwd": "${workspaceFolder}/ECommerceRN/ECommerceRN"
+			}
+		}
+	]
+}
