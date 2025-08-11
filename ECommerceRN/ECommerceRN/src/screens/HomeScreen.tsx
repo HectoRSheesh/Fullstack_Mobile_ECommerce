@@ -37,6 +37,7 @@ const HomeScreen: React.FC = () => {
   const handleCategoryPress = (categoryId: number) => {
     // Products sayfasına yönlendir
     console.log('Category pressed:', categoryId);
+    navigation.navigate('MainTabs', { screen: 'Products' });
     // Kategori filtresi uygulanabilir
   };
 
@@ -120,7 +121,7 @@ const HomeScreen: React.FC = () => {
         {/* Search Button */}
         <TouchableOpacity 
           style={styles.searchButton}
-          onPress={() => console.log('Navigate to Products')}
+          onPress={() => navigation.navigate('MainTabs', { screen: 'Products' })}
         >
           <Icon name="search" size={20} color="#007AFF" />
           <Text style={styles.searchButtonText}>Ürün ara...</Text>
@@ -144,7 +145,7 @@ const HomeScreen: React.FC = () => {
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Öne Çıkan Ürünler</Text>
-          <TouchableOpacity onPress={() => handleCategoryPress(0)}>
+          <TouchableOpacity onPress={() => navigation.navigate('MainTabs', { screen: 'Products' })}>
             <Text style={styles.seeAllText}>Tümünü Gör</Text>
           </TouchableOpacity>
         </View>
